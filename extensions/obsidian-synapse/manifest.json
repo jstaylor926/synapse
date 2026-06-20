@@ -1,0 +1,9 @@
+{
+  "id": "synapse",
+  "name": "Synapse",
+  "version": "0.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "Interact with the Synapse planner and spaced repetition from inside your vault.",
+  "author": "Synapse",
+  "isDesktopOnly": true
+}

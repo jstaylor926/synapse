@@ -1,0 +1,10 @@
+# Bun configuration for the Synapse monorepo.
+# Workspaces are declared in package.json ("workspaces"); Bun installs them
+# together and hoists shared deps to the root node_modules.
+
+[install]
+# Install devDependencies (concurrently, tsc, types) at the root.
+production = false
+
+# Keep peer deps explicit so workspace surfaces (cockpit) control their React version.
+peer = true

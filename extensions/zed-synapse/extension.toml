@@ -1,0 +1,7 @@
+id = "synapse"
+name = "Synapse"
+version = "0.1.0"
+schema_version = 1
+authors = ["Synapse"]
+description = "Context-aware code assistant backed by the Synapse knowledge base."
+repository = "https://github.com/jstaylor926/synapse"

@@ -1,0 +1,59 @@
+# dependencies (bun install)
+node_modules
+
+# output
+out
+dist
+*.tgz
+
+# code coverage
+coverage
+*.lcov
+
+# logs
+logs
+_.log
+report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
+
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# caches
+.eslintcache
+.cache
+*.tsbuildinfo
+
+# IntelliJ based IDEs
+.idea
+
+# Finder (MacOS) folder config
+.DS_Store
+
+# --- Synapse: local data (Data as Truth lives here, but it's machine-local) ---
+# The Markdown vault and the derived SQLite indexes are never committed.
+/data/vault/*
+/data/db/*
+!/data/vault/.gitkeep
+!/data/db/.gitkeep
+
+# --- Python kernel ---
+.venv
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.python-version.local
+
+# --- Tauri / Rust ---
+target/
+**/src-tauri/target/
+**/src-tauri/gen/
+
+# --- Vite build output ---
+**/.vite/

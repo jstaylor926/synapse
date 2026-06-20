@@ -1,0 +1,19 @@
+{
+  "name": "@synapse/obsidian-synapse",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Obsidian plugin to interact with the Synapse planner and spaced repetition.",
+  "type": "module",
+  "main": "src/main.ts",
+  "scripts": {
+    "dev": "bun build src/main.ts --outfile=main.js --format=cjs --external:obsidian --watch",
+    "build": "bun build src/main.ts --outfile=main.js --format=cjs --external:obsidian",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@synapse/contracts-ts": "workspace:*"
+  },
+  "devDependencies": {
+    "obsidian": "latest"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "synapse",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "extensions/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,worker,cockpit -c blue,yellow,green \"bun run dev:api\" \"bun run dev:worker\" \"bun run dev:cockpit\"",
+    "dev:api": "uv run --no-sync --directory kernel python -m synapse_engine.api_server",
+    "dev:worker": "uv run --no-sync --directory kernel python -m workers.worker",
+    "dev:mcp": "uv run --no-sync --directory kernel python -m synapse_engine.mcp_server",
+    "dev:cockpit": "bun run --cwd apps/cockpit dev",
+    "dev:desktop": "bun run --cwd apps/cockpit tauri:dev",
+    "dev:glasses": "bun run --cwd apps/glasses-bridge dev",
+    "typecheck": "bun run --filter '*' typecheck",
+    "test:kernel": "uv run --no-sync --directory kernel pytest"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "concurrently": "^9",
+    "typescript": "^5"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
