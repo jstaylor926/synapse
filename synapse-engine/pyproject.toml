@@ -1,0 +1,30 @@
+[project]
+name = "synapse-engine"
+version = "0.1.0"
+description = "Personal study + reasoning engine. Ingest your material, build a queryable knowledge base, study and reason over it with citations. MCP-native. Fuses 'Code Study Buddy' + 'Personal Reasoning Engine'."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Joshua Taylor", email = "jstaylor926@gmail.com" }]
+# Core path is intentionally dependency-free so it runs anywhere, offline.
+dependencies = []
+
+[project.optional-dependencies]
+pdf = ["pymupdf>=1.24.0"]          # ingest PDFs
+mcp = ["mcp>=1.2.0"]               # expose tools over MCP
+llm = ["anthropic>=0.40.0"]       # real generation instead of extractive
+dev = ["pytest>=8.0"]
+all = ["pymupdf>=1.24.0", "mcp>=1.2.0", "anthropic>=0.40.0", "pytest>=8.0"]
+
+[project.scripts]
+synapse = "synapse_engine.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
