@@ -8,6 +8,15 @@ const host = process.env.TAURI_DEV_HOST;
 export default defineConfig(async () => ({
   plugins: [react()],
 
+  // CodeMirror breaks if more than one instance of @codemirror/state loads
+  // (instanceof checks fail → "Unrecognized extension value"). `@codemirror/state`
+  // and `@codemirror/view` are pinned (root package.json `overrides`) and listed as
+  // direct cockpit deps so bun hoists a single copy here; `dedupe` makes Vite
+  // resolve every importer to that one module.
+  resolve: {
+    dedupe: ["@codemirror/state", "@codemirror/view"],
+  },
+
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
   // 1. prevent Vite from obscuring rust errors

@@ -75,3 +75,11 @@ export function ask(question: string, k = 8): Promise<ReasonAnswer> {
     body: JSON.stringify({ question, k }),
   });
 }
+
+/** Grounded coding help over your ingested code + docs — same shape as `ask`. */
+export function codeAssist(query: string, k = 8): Promise<ReasonAnswer> {
+  return request<ReasonAnswer>("/code/assist", {
+    method: "POST",
+    body: JSON.stringify({ question: query, k }),
+  });
+}

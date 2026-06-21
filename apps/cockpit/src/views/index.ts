@@ -1,6 +1,12 @@
 /**
  * View registry. Keys match the icon names in `NAV_ICONS` so the nav rail and
- * the router stay in lockstep. Each view is a presentational placeholder.
+ * the router stay in lockstep.
+ *
+ * `ready` is the single source of truth for "this view is wired to the kernel
+ * for real" (vs. a presentational mock). The feature gate in `../featureFlags`
+ * reads it to decide what's selectable during local testing. Flip a view to
+ * `ready: true` the moment its kernel capability + REST route + client method
+ * land — see IMPLEMENTATION_STATUS.md.
  */
 import type { ComponentType } from "react";
 import { AskView } from "./AskView";
@@ -22,13 +28,20 @@ export type ViewId =
   | "notes"
   | "vault";
 
-export const VIEWS: Record<ViewId, { title: string; component: ComponentType }> = {
-  ask: { title: "Ask", component: AskView },
-  code: { title: "Code Buddy", component: CodeBuddyView },
-  capture: { title: "Capture", component: CaptureView },
-  planner: { title: "Planner", component: PlannerView },
-  review: { title: "Review", component: ReviewView },
-  study: { title: "Study", component: StudyView },
-  notes: { title: "Notes", component: NotesView },
-  vault: { title: "Vault", component: VaultView },
+export interface ViewMeta {
+  title: string;
+  component: ComponentType;
+  /** True once the view is backed by a real kernel capability (not mock data). */
+  ready: boolean;
+}
+
+export const VIEWS: Record<ViewId, ViewMeta> = {
+  ask: { title: "Ask", component: AskView, ready: true },
+  code: { title: "Code Buddy", component: CodeBuddyView, ready: true },
+  capture: { title: "Capture", component: CaptureView, ready: false },
+  planner: { title: "Planner", component: PlannerView, ready: false },
+  review: { title: "Review", component: ReviewView, ready: false },
+  study: { title: "Study", component: StudyView, ready: false },
+  notes: { title: "Notes", component: NotesView, ready: false },
+  vault: { title: "Vault", component: VaultView, ready: false },
 };

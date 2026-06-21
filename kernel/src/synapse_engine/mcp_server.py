@@ -54,6 +54,14 @@ def ingest_url(url: str) -> dict:
     return {"job_id": job_id, "status": "queued"}
 
 
+@mcp.tool
+def code_assist(query: str, k: int = 8) -> dict:
+    """Grounded coding help over your ingested code + docs (read-only)."""
+    from synapse_engine.code import assist
+
+    return assist(query, k=k).model_dump()
+
+
 def main() -> None:
     get_settings().ensure_dirs()
     mcp.run()

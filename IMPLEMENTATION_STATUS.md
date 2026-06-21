@@ -1,6 +1,13 @@
 # Synapse — Implementation Status & Integration Tracker
 
-> **Updated:** 2026-06-20 · **Branch:** `update-claude`
+> **Updated:** 2026-06-21 · **Branch:** `main` (merged `update-claude` via PR #1)
+>
+> **As of `main` (commit `28af6f8`):** the legacy backend tree (`synapse-engine/` +
+> top-level `contracts|features|jobs|workers|additional_features|editor_core/`) is now
+> committed alongside the canonical `kernel/`, so the **two kernels of §3 genuinely
+> coexist in-tree** — M0 reconciliation is still open. The kernel surface is unchanged:
+> **3 MCP tools** (`health`, `kb_search`, `ingest_url`), **3 REST routes** (`/health`,
+> `/kb/search`, `/reason/ask`), `kb`+`reason` real, all other capabilities stubbed.
 >
 > Living status of *what is actually built*, *how to run it*, and *what's left* to
 > connect every module into the Tauri cockpit. Companion to `PROJECT_ARCHITECTURE.md`

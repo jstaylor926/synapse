@@ -53,6 +53,13 @@ def reason_ask(body: ReasonAsk) -> dict:
     return answer(body.question, k=body.k).model_dump()
 
 
+@app.post("/code/assist")
+def code_assist(body: ReasonAsk) -> dict:
+    from synapse_engine.code import assist
+
+    return assist(body.question, k=body.k).model_dump()
+
+
 def main() -> None:
     import uvicorn
 

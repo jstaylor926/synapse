@@ -47,7 +47,11 @@ class Settings(BaseSettings):
 
     # --- Models ------------------------------------------------------------
     # Local-first defaults; gracefully upgrade to cloud when a key is present.
-    llm_model: str = "ollama/llama3.1"
+    # `llm_model` carries a litellm provider prefix (`ollama/…`, `anthropic/…`).
+    # Override with SYNAPSE_LLM_MODEL, e.g. `anthropic/claude-...` or another
+    # local tag. The default is a capable local coder pulled by most setups.
+    llm_model: str = "ollama/qwen2.5:7b"
+    ollama_base: str = "http://127.0.0.1:11434"
     anthropic_api_key: str | None = None
     embed_model: str = "BAAI/bge-small-en-v1.5"
 
