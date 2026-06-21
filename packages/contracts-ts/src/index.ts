@@ -45,3 +45,25 @@ export interface ReviewCard {
   stability: number;
   difficulty: number;
 }
+
+/** A pointer back to a source chunk — one shape wherever a citation appears. */
+export interface Citation {
+  source: string;
+  score: number;
+  snippet: string;
+}
+
+export interface ReasonAsk {
+  question: string;
+  k?: number;
+}
+
+/** A grounded answer with citations back to source chunks (never fabricated). */
+export interface ReasonAnswer {
+  answer: string;
+  citations: Citation[];
+  /** Present only for multi-step reasoning — the decomposed sub-questions. */
+  steps?: string[] | null;
+  /** Degradation rung: "extractive" (no LLM) or "generative". */
+  mode: string;
+}

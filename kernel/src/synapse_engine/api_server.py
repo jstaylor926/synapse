@@ -1,7 +1,9 @@
 """FastAPI edge — a thin REST adapter for surfaces that cannot speak MCP.
 
-Primarily consumed by the AR glasses bridge (`apps/glasses-bridge`). Keep this
-surface intentionally small; the MCP edge is the primary, richer contract.
+Consumed by the desktop cockpit (`apps/cockpit`), the AR glasses bridge
+(`apps/glasses-bridge`), the CLI, and the editor extensions. Each route is a
+thin adapter that validates input with the shared `contracts` models and calls
+the same in-process capability the MCP edge does — so the two edges can't drift.
 
 Run it:
 
@@ -12,11 +14,23 @@ Run it:
 from __future__ import annotations
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from contracts.models import ReasonAsk
 
 from synapse_engine import __version__
 from synapse_engine.config import get_settings
 
 app = FastAPI(title="Synapse REST edge", version=__version__)
+
+# Allow the browser-based surfaces (the Tauri cockpit) to call the edge.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=get_settings().api_cors_origins,
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/health")
@@ -30,6 +44,13 @@ def kb_search(q: str, k: int = 8) -> dict:
     from synapse_engine.kb import search
 
     return {"query": q, "hits": [hit.model_dump() for hit in search(q, k=k)]}
+
+
+@app.post("/reason/ask")
+def reason_ask(body: ReasonAsk) -> dict:
+    from synapse_engine.reason import answer
+
+    return answer(body.question, k=body.k).model_dump()
 
 
 def main() -> None:
