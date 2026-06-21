@@ -32,6 +32,18 @@ class Settings(BaseSettings):
     # --- Edges -------------------------------------------------------------
     api_host: str = "127.0.0.1"
     api_port: int = 8765
+    # Origins allowed to call the REST edge from a browser context. The Tauri
+    # cockpit is served from localhost:1420 in dev and from the tauri:// scheme
+    # once packaged. Override with SYNAPSE_API_CORS_ORIGINS (a JSON array).
+    api_cors_origins: list[str] = Field(
+        default=[
+            "http://localhost:1420",
+            "http://127.0.0.1:1420",
+            "tauri://localhost",
+            "https://tauri.localhost",
+        ],
+        description="Browser origins permitted to call the REST edge (CORS).",
+    )
 
     # --- Models ------------------------------------------------------------
     # Local-first defaults; gracefully upgrade to cloud when a key is present.

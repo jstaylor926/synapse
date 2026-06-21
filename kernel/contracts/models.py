@@ -60,3 +60,29 @@ class ReviewCard(BaseModel):
     due: datetime | None = None
     stability: float = 0.0
     difficulty: float = 0.0
+
+
+class Citation(BaseModel):
+    """A pointer back to a source chunk — one shape wherever a citation appears."""
+
+    source: str
+    score: float
+    snippet: str
+
+
+class ReasonAsk(BaseModel):
+    """Request body for `reason_ask`."""
+
+    question: str
+    k: int = 8
+
+
+class ReasonAnswer(BaseModel):
+    """A grounded answer with citations back to source chunks (never fabricated)."""
+
+    answer: str
+    citations: list[Citation] = Field(default_factory=list)
+    # Present only for multi-step reasoning — the decomposed sub-questions.
+    steps: list[str] | None = None
+    # Which degradation rung produced this: "extractive" (no LLM) or "generative".
+    mode: str = "extractive"

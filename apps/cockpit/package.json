@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "typecheck": "tsc --noEmit",
     "preview": "vite preview",
     "tauri": "tauri",
     "tauri:dev": "tauri dev"
@@ -15,6 +16,7 @@
     "react-dom": "^19.1.0",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "^2",
+    "@synapse/client": "workspace:*",
     "@synapse/contracts-ts": "workspace:*",
     "@synapse/ui-kit": "workspace:*"
   },

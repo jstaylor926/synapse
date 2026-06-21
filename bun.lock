@@ -27,6 +27,7 @@
       "name": "@synapse/cockpit",
       "version": "0.1.0",
       "dependencies": {
+        "@synapse/client": "workspace:*",
         "@synapse/contracts-ts": "workspace:*",
         "@synapse/ui-kit": "workspace:*",
         "@tauri-apps/api": "^2",
@@ -58,6 +59,13 @@
       },
       "devDependencies": {
         "obsidian": "latest",
+      },
+    },
+    "packages/client": {
+      "name": "@synapse/client",
+      "version": "0.1.0",
+      "dependencies": {
+        "@synapse/contracts-ts": "workspace:*",
       },
     },
     "packages/contracts-ts": {
@@ -237,6 +245,8 @@
     "@rollup/rollup-win32-x64-msvc": ["@rollup/rollup-win32-x64-msvc@4.62.2", "", { "os": "win32", "cpu": "x64" }, "sha512-BfzEnDJOt9T8M989/lA37EcJgat01wLRnoi5dQf3QzOH7jzpqTAzdDbVfRljVr5r+jzKqpbHeyOfAaXxAd0PAA=="],
 
     "@synapse/cli": ["@synapse/cli@workspace:apps/cli"],
+
+    "@synapse/client": ["@synapse/client@workspace:packages/client"],
 
     "@synapse/cockpit": ["@synapse/cockpit@workspace:apps/cockpit"],
 

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { ask } from "@synapse/client";
+import type { Citation } from "@synapse/contracts-ts";
 import {
   PageHeader,
   SegmentedControl,
@@ -12,40 +14,63 @@ import {
   GlowAccent,
 } from "@synapse/ui-kit";
 
-const CITATIONS = [
-  {
-    index: 1,
-    source: "lecture-07.pdf · p.12",
-    quote:
-      "…temperature T controls the Metropolis acceptance of uphill moves; as T→0 the walk becomes greedy hill-climbing…",
-    score: 0.91,
-  },
-  {
-    index: 2,
-    source: "notes/sa-vs-ga.md",
-    quote:
-      "GA keeps a population; crossover recombines partial solutions, mutation adds diversity — implicit parallel search over schemata.",
-    score: 0.88,
-  },
-  {
-    index: 3,
-    source: "lecture-08.pdf · p.3",
-    quote:
-      "Choosing an optimizer: cost of evaluation, ruggedness, and whether the representation recombines meaningfully.",
-    score: 0.74,
-  },
-];
-
-const RETRIEVAL = [
-  { left: "vector · sqlite-vec", right: "top-K 40" },
-  { left: "lexical · FTS5 / BM25", right: "top-K 40" },
-  { left: "merge · RRF", right: "→ 50", divider: true },
-  { left: "rerank · bge-base", right: "50 → 5", accent: true },
-  { left: "inline · bounded · timeout", right: "1.41s", divider: true, ok: true },
-];
-
 export function AskView() {
   const [mode, setMode] = useState("Ask");
+  const [input, setInput] = useState("");
+  const [question, setQuestion] = useState<string | null>(null);
+  const [answer, setAnswer] = useState<string | null>(null);
+  const [citations, setCitations] = useState<Citation[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [elapsedMs, setElapsedMs] = useState<number | null>(null);
+
+  async function send() {
+    const q = input.trim();
+    if (!q || loading) return;
+    setQuestion(q);
+    setInput("");
+    setLoading(true);
+    setError(null);
+    const started = performance.now();
+    try {
+      const res = await ask(q, 8);
+      setAnswer(res.answer);
+      setCitations(res.citations);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+      setAnswer(null);
+      setCitations([]);
+    } finally {
+      setElapsedMs(Math.round(performance.now() - started));
+      setLoading(false);
+    }
+  }
+
+  function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      void send();
+    }
+  }
+
+  const retrieval: {
+    left: string;
+    right: string;
+    divider?: boolean;
+    accent?: boolean;
+    ok?: boolean;
+  }[] = [
+    { left: "lexical · BM25 (floor)", right: "vault scan" },
+    { left: "vector · sqlite-vec", right: "off" },
+    { left: "merge · RRF", right: "—", divider: true },
+    { left: "rerank · bge-base", right: "off", accent: true },
+    {
+      left: "extractive · no LLM",
+      right: elapsedMs != null ? `${elapsedMs}ms` : "idle",
+      divider: true,
+      ok: elapsedMs != null,
+    },
+  ];
 
   return (
     <div className="view view__split">
@@ -63,35 +88,45 @@ export function AskView() {
                 value={mode}
                 onChange={setMode}
               />
-              <Badge tone="success">claude-sonnet · litellm</Badge>
+              <Badge tone="neutral">extractive · no LLM</Badge>
             </>
           }
         />
 
         <div style={{ height: 20 }} />
 
-        <ChatBubble role="user">
-          How does simulated annealing differ from a genetic algorithm for randomized optimization,
-          and when would you pick each?
-        </ChatBubble>
+        {question && <ChatBubble role="user">{question}</ChatBubble>}
 
-        <div style={{ height: 18 }} />
+        {question && <div style={{ height: 18 }} />}
 
         <ChatBubble
           role="agent"
-          footer="grounded · 3 citations · never fabricates (§1.10)"
+          footer={
+            error
+              ? "request failed · is the kernel running? (bun run dev:api)"
+              : answer
+                ? `grounded · ${citations.length} citation${citations.length === 1 ? "" : "s"} · never fabricates (§1.10)`
+                : "ask a question and I'll answer from your vault — grounded, with citations"
+          }
         >
-          <p style={{ margin: 0 }}>
-            Simulated annealing is a <strong style={{ color: "#fff" }}>single-solution</strong>{" "}
-            search: it perturbs one candidate and accepts worse moves with a probability set by a
-            falling temperature schedule, so early exploration gives way to late exploitation.
-          </p>
-          <p style={{ marginBottom: 0 }}>
-            A genetic algorithm instead evolves a <strong style={{ color: "#fff" }}>population</strong>,
-            recombining high-fitness individuals via crossover and mutation — letting it cover several
-            basins at once. Prefer SA when evaluations are cheap and the landscape is rugged but
-            locally smooth; prefer a GA when structure recombines well.
-          </p>
+          {loading ? (
+            <p style={{ margin: 0, color: "var(--syn-text-secondary)" }}>
+              Retrieving from your vault…
+            </p>
+          ) : error ? (
+            <p style={{ margin: 0, color: "var(--syn-danger)" }}>{error}</p>
+          ) : answer ? (
+            answer.split("\n\n").map((para, i) => (
+              <p key={i} style={{ marginTop: i === 0 ? 0 : undefined, marginBottom: 0 }}>
+                {para}
+              </p>
+            ))
+          ) : (
+            <p style={{ margin: 0, color: "var(--syn-text-fainter)" }}>
+              e.g. “How does simulated annealing differ from a genetic algorithm, and when would
+              you pick each?”
+            </p>
+          )}
         </ChatBubble>
 
         <div className="grow" />
@@ -109,11 +144,23 @@ export function AskView() {
             padding: "11px 13px",
           }}
         >
-          <span style={{ fontSize: 13.5, color: "var(--syn-text-fainter)", flex: 1 }}>
-            Ask your vault…
-          </span>
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={onKeyDown}
+            placeholder="Ask your vault…"
+            style={{
+              flex: 1,
+              background: "transparent",
+              border: "none",
+              outline: "none",
+              fontSize: 13.5,
+              color: "var(--syn-text-primary)",
+              fontFamily: "inherit",
+            }}
+          />
           <Kbd>⌘↵</Kbd>
-          <Button variant="primary">
+          <Button variant="primary" onClick={() => void send()} disabled={loading || !input.trim()}>
             SEND <Icon name="send" size={13} strokeWidth={2} />
           </Button>
         </div>
@@ -122,12 +169,24 @@ export function AskView() {
       {/* citations rail */}
       <div className="view__aside" style={{ width: 346 }}>
         <div className="row--between">
-          <Eyebrow>Citations · 3</Eyebrow>
+          <Eyebrow>Citations · {citations.length}</Eyebrow>
           <span className="meta">→ source chunks</span>
         </div>
 
-        {CITATIONS.map((c) => (
-          <CitationCard key={c.index} {...c} />
+        {citations.length === 0 && !loading && (
+          <span className="meta" style={{ color: "var(--syn-text-fainter)" }}>
+            No citations yet.
+          </span>
+        )}
+
+        {citations.map((c, i) => (
+          <CitationCard
+            key={`${c.source}-${i}`}
+            index={i + 1}
+            source={c.source}
+            quote={c.snippet}
+            score={c.score}
+          />
         ))}
 
         <div
@@ -141,7 +200,7 @@ export function AskView() {
         >
           <Eyebrow>Retrieval</Eyebrow>
           <div style={{ display: "flex", flexDirection: "column", gap: 7, marginTop: 10 }}>
-            {RETRIEVAL.map((r) => (
+            {retrieval.map((r) => (
               <div
                 key={r.left}
                 className="row--between meta"
