@@ -1,0 +1,854 @@
+/* ============================================================================
+ * Neo-Gonzo Noir — component styles
+ * ----------------------------------------------------------------------------
+ * One cohesive stylesheet for every ui-kit component, all driven by the tokens
+ * in tokens.css. Class names are prefixed `syn-` to avoid collisions with
+ * surface-level styles. Grouped by component for readability.
+ * ========================================================================== */
+
+/* ===================== APP SHELL ===================== */
+.syn-shell {
+  min-height: 100vh;
+  width: 100%;
+  overflow: auto;
+  background: var(--syn-bg-abyss);
+  background-image: radial-gradient(circle at 18% 8%, #0e1420 0, var(--syn-bg-abyss) 60%);
+  padding: 40px 24px;
+}
+.syn-shell__window {
+  position: relative;
+  width: 1440px;
+  max-width: 100%;
+  min-height: 900px;
+  margin: 0 auto;
+  background: var(--syn-bg-base);
+  border: 1px solid rgba(var(--syn-border-hue), 0.14);
+  border-radius: var(--syn-radius-window);
+  overflow: hidden;
+  box-shadow: var(--syn-shadow-window);
+  font-family: var(--syn-font-sans);
+  color: var(--syn-text);
+  display: flex;
+  flex-direction: column;
+}
+/* Fluid variant fills its container (e.g. a maximized desktop window). */
+.syn-shell--fluid {
+  padding: 0;
+}
+.syn-shell--fluid .syn-shell__window {
+  width: 100%;
+  height: 100vh;
+  min-height: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+.syn-shell__body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  position: relative;
+  z-index: 10;
+}
+.syn-shell__main {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  overflow: auto;
+  background: var(--syn-bg-base);
+}
+
+/* ===================== GRAIN OVERLAY ===================== */
+.syn-grain {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 80;
+  mix-blend-mode: soft-light;
+  opacity: var(--syn-grain, 0.06);
+}
+
+/* ===================== GLOW ACCENT ===================== */
+.syn-glow {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--syn-accent) 22%, transparent),
+    transparent 68%
+  );
+  filter: blur(48px);
+  opacity: 0.45;
+  z-index: 0;
+}
+
+/* ===================== TITLE BAR ===================== */
+.syn-titlebar {
+  height: 48px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 16px;
+  background: var(--syn-bg-titlebar);
+  border-bottom: 1px solid var(--syn-divider);
+  position: relative;
+  z-index: 30;
+}
+.syn-titlebar__lights {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.syn-titlebar__light {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+}
+.syn-titlebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.syn-titlebar__brand-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--syn-accent);
+  box-shadow: 0 0 10px var(--syn-accent);
+}
+.syn-titlebar__brand-name {
+  font-family: var(--syn-font-display);
+  font-size: 17px;
+  letter-spacing: 0.04em;
+  color: var(--syn-text-bright);
+}
+.syn-titlebar__brand-sub {
+  font-family: var(--syn-font-mono);
+  font-size: var(--syn-text-xs);
+  color: var(--syn-text-fainter);
+  letter-spacing: 0.04em;
+}
+.syn-titlebar__center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+.syn-titlebar__status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+/* ===================== SEARCH FIELD ===================== */
+.syn-search {
+  width: 480px;
+  max-width: 100%;
+  height: 30px;
+  background: var(--syn-surface-input);
+  border: 1px solid rgba(var(--syn-border-hue), 0.13);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 11px;
+  color: var(--syn-text-fainter);
+}
+.syn-search__placeholder {
+  font-size: 12.5px;
+  font-family: var(--syn-font-sans);
+}
+.syn-search__kbd {
+  font-family: var(--syn-font-mono);
+  font-size: var(--syn-text-xs);
+  color: var(--syn-text-disabled);
+}
+
+/* ===================== NAV RAIL ===================== */
+.syn-rail {
+  width: 236px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  background: var(--syn-bg-rail);
+  border-right: 1px solid var(--syn-divider);
+}
+.syn-rail__heading {
+  padding: 16px 16px 9px;
+  font-family: var(--syn-font-mono);
+  font-size: var(--syn-text-xs);
+  letter-spacing: 0.18em;
+  color: var(--syn-text-ghost);
+}
+.syn-rail__spacer {
+  flex: 1;
+}
+.syn-rail__footer {
+  margin: 0 12px 12px;
+}
+
+.syn-navitem {
+  appearance: none;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 16px;
+  background: transparent;
+  border: none;
+  color: var(--syn-text-muted);
+  font-family: var(--syn-font-sans);
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.syn-navitem:hover {
+  background: rgba(var(--syn-border-hue), 0.05);
+  color: var(--syn-text);
+}
+.syn-navitem__icon {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  color: var(--syn-accent);
+}
+.syn-navitem__label {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+}
+.syn-navitem__tag {
+  position: relative;
+  z-index: 1;
+  font-family: var(--syn-font-mono);
+  font-size: 9.5px;
+  color: var(--syn-text-fainter);
+  letter-spacing: 0.06em;
+}
+.syn-navitem__active {
+  position: absolute;
+  inset: 0;
+  background: var(--syn-accent-12);
+  border-left: 3px solid var(--syn-accent);
+  z-index: 0;
+}
+
+/* ===================== BADGE / STATUS PILL ===================== */
+.syn-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 9px;
+  border: 1px solid var(--syn-border);
+  border-radius: var(--syn-radius-sm);
+  font-family: var(--syn-font-mono);
+  font-size: 10.5px;
+  color: var(--syn-text-dim);
+  white-space: nowrap;
+}
+.syn-badge--accent {
+  border-color: var(--syn-accent-35);
+  background: var(--syn-accent-12);
+  color: var(--syn-accent-text);
+}
+.syn-badge--success {
+  border-color: rgba(95, 229, 114, 0.3);
+  background: rgba(95, 229, 114, 0.07);
+  color: var(--syn-success-text);
+}
+.syn-badge--purple {
+  border-color: rgba(139, 92, 240, 0.3);
+  background: rgba(139, 92, 240, 0.08);
+  color: var(--syn-purple-text);
+}
+.syn-badge--danger {
+  border-color: rgba(255, 77, 87, 0.32);
+  background: rgba(255, 77, 87, 0.08);
+  color: var(--syn-danger-text);
+}
+
+/* ===================== TAG / CHIP ===================== */
+.syn-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--syn-font-mono);
+  font-size: var(--syn-text-xs);
+  padding: 2px 7px;
+  border-radius: var(--syn-radius-pill);
+  border: 1px solid transparent;
+  color: var(--syn-text-dim);
+  background: rgba(var(--syn-border-hue), 0.08);
+}
+.syn-tag--accent {
+  color: var(--syn-accent);
+  background: var(--syn-accent-12);
+  border-color: var(--syn-accent-26);
+}
+.syn-tag--purple {
+  color: var(--syn-purple-text);
+  background: rgba(139, 92, 240, 0.1);
+  border-color: rgba(139, 92, 240, 0.4);
+}
+.syn-tag--success {
+  color: var(--syn-success);
+  background: rgba(95, 229, 114, 0.1);
+  border-color: rgba(95, 229, 114, 0.35);
+}
+.syn-tag--danger {
+  color: var(--syn-danger-text);
+  background: rgba(255, 77, 87, 0.08);
+  border-color: rgba(255, 77, 87, 0.35);
+}
+.syn-tag--neutral {
+  color: var(--syn-text-dim);
+  border-color: var(--syn-border-strong);
+  background: transparent;
+}
+
+/* ===================== CARD ===================== */
+.syn-card {
+  background: var(--syn-surface);
+  border: 1px solid rgba(var(--syn-border-hue), 0.11);
+  border-radius: var(--syn-radius-md);
+  padding: var(--syn-space-3);
+  position: relative;
+}
+.syn-card--sunken {
+  background: var(--syn-surface-sunken);
+}
+.syn-card--active {
+  background: color-mix(in srgb, var(--syn-accent) 7%, var(--syn-surface));
+  border-color: color-mix(in srgb, var(--syn-accent) 34%, transparent);
+}
+.syn-card--accent-edge {
+  border-color: var(--syn-accent-35);
+  border-left: 3px solid var(--syn-accent);
+}
+.syn-card--dashed {
+  border-style: dashed;
+  border-color: rgba(var(--syn-border-hue), 0.18);
+  background: var(--syn-surface-sunken);
+}
+.syn-card--dashed-purple {
+  border-style: dashed;
+  border-color: rgba(139, 92, 240, 0.3);
+  background: var(--syn-surface-sunken);
+}
+
+/* ===================== BUTTON ===================== */
+.syn-btn {
+  appearance: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-family: var(--syn-font-sans);
+  font-weight: 700;
+  font-size: 12.5px;
+  padding: 8px 14px;
+  border-radius: var(--syn-radius-md);
+  border: 1px solid transparent;
+  transition: transform 0.08s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+.syn-btn:active {
+  transform: translate(2px, 2px);
+}
+/* Primary — bright accent block with the gonzo hard-offset shadow. */
+.syn-btn--primary {
+  background: var(--syn-accent);
+  color: var(--syn-text-on-accent);
+  font-weight: 800;
+  box-shadow: var(--syn-shadow-offset);
+}
+.syn-btn--primary:active {
+  box-shadow: 1px 1px 0 color-mix(in srgb, var(--syn-accent) 28%, transparent);
+}
+/* Secondary — outlined steel. */
+.syn-btn--secondary {
+  background: transparent;
+  color: var(--syn-text-dim);
+  border-color: var(--syn-border-strong);
+}
+.syn-btn--secondary:hover {
+  color: var(--syn-text);
+  border-color: var(--syn-accent-35);
+}
+/* Ghost — text only. */
+.syn-btn--ghost {
+  background: transparent;
+  color: var(--syn-text-dimmer);
+}
+.syn-btn--ghost:hover {
+  color: var(--syn-text);
+  background: rgba(var(--syn-border-hue), 0.05);
+}
+.syn-btn--block {
+  width: 100%;
+  padding: 12px;
+  font-size: 13.5px;
+  box-shadow: 4px 4px 0 color-mix(in srgb, var(--syn-accent) 26%, transparent);
+}
+.syn-btn--sm {
+  padding: 5px 10px;
+  font-size: var(--syn-text-xs);
+}
+
+/* ===================== KBD ===================== */
+.syn-kbd {
+  font-family: var(--syn-font-mono);
+  font-size: var(--syn-text-xs);
+  color: var(--syn-text-disabled);
+}
+
+/* ===================== STAMP ===================== */
+.syn-stamp {
+  display: inline-block;
+  font-family: var(--syn-font-display);
+  font-size: var(--syn-text-base);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 6px 11px;
+  border: 2px solid var(--syn-danger);
+  border-radius: var(--syn-radius-pill);
+  color: var(--syn-danger);
+  background: rgba(255, 77, 87, 0.06);
+  transform: rotate(-5deg);
+  white-space: nowrap;
+}
+.syn-stamp--accent {
+  border-color: var(--syn-accent);
+  color: var(--syn-accent);
+  background: var(--syn-accent-07);
+}
+
+/* ===================== PROGRESS BAR ===================== */
+.syn-progress {
+  width: 100%;
+  height: 4px;
+  background: var(--syn-track);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.syn-progress--tall {
+  height: 5px;
+}
+.syn-progress__fill {
+  height: 100%;
+  background: var(--syn-accent);
+  border-radius: 2px;
+}
+
+/* ===================== SEGMENTED CONTROL ===================== */
+.syn-segmented {
+  display: inline-flex;
+  border: 1px solid rgba(var(--syn-border-hue), 0.14);
+  border-radius: var(--syn-radius-md);
+  overflow: hidden;
+}
+.syn-segmented--block {
+  display: flex;
+  width: 100%;
+}
+.syn-segmented__item {
+  appearance: none;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  border-left: 1px solid rgba(var(--syn-border-hue), 0.14);
+  padding: 7px 13px;
+  font-family: var(--syn-font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--syn-text-dimmer);
+  flex: 1;
+  text-align: center;
+}
+.syn-segmented__item:first-child {
+  border-left: none;
+}
+.syn-segmented__item--active {
+  background: var(--syn-accent-16);
+  color: var(--syn-accent-text);
+  font-weight: 700;
+}
+
+/* ===================== STEPPER ===================== */
+.syn-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+}
+.syn-stepper__btn {
+  appearance: none;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(var(--syn-border-hue), 0.2);
+  border-radius: 5px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--syn-text-dim);
+  font-size: 16px;
+}
+.syn-stepper__btn:hover {
+  border-color: var(--syn-accent-35);
+  color: var(--syn-text);
+}
+.syn-stepper__value {
+  font-size: var(--syn-text-xl);
+  font-weight: 800;
+  min-width: 32px;
+  text-align: center;
+}
+
+/* ===================== EYEBROW + PAGE HEADER ===================== */
+.syn-pageheader {
+  position: relative;
+}
+.syn-pageheader__eyebrow {
+  font-family: var(--syn-font-mono);
+  font-size: var(--syn-text-sm);
+  letter-spacing: var(--syn-tracking-label);
+  color: var(--syn-text-fainter);
+  margin-bottom: 8px;
+}
+.syn-pageheader__title {
+  font-size: var(--syn-text-2xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.syn-pageheader__desc {
+  font-size: var(--syn-text-base);
+  color: var(--syn-text-dimmer);
+  margin-top: 7px;
+  max-width: 560px;
+}
+
+/* ===================== DIVIDER ===================== */
+.syn-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.syn-divider__line {
+  flex: 1;
+  height: 1px;
+  background: var(--syn-border);
+}
+.syn-divider__label {
+  font-family: var(--syn-font-display);
+  font-size: var(--syn-text-sm);
+  color: var(--syn-text-faint);
+  letter-spacing: 0.08em;
+}
+
+/* ===================== CHAT BUBBLE ===================== */
+.syn-bubble {
+  border-radius: var(--syn-radius-lg);
+  padding: 13px 15px;
+}
+.syn-bubble__role {
+  font-family: var(--syn-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  color: var(--syn-text-faint);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.syn-bubble__role-name {
+  font-family: var(--syn-font-display);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--syn-accent-text);
+  text-transform: none;
+}
+.syn-bubble__body {
+  font-size: var(--syn-text-md);
+  line-height: 1.6;
+  color: var(--syn-text);
+}
+.syn-bubble--user {
+  align-self: flex-end;
+  max-width: 74%;
+  background: color-mix(in srgb, var(--syn-accent) 13%, var(--syn-surface));
+  border: 1px solid var(--syn-accent-26);
+  border-radius: 9px 9px 2px 9px;
+}
+.syn-bubble--agent {
+  max-width: 88%;
+  background: var(--syn-surface);
+  border: 1px solid var(--syn-border);
+  border-radius: 2px 9px 9px 9px;
+  padding: 16px 18px;
+}
+.syn-bubble--agent .syn-bubble__body {
+  color: var(--syn-text-body);
+  line-height: 1.72;
+}
+.syn-bubble__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--syn-accent);
+  box-shadow: 0 0 8px var(--syn-accent);
+}
+
+/* ===================== CITATION CARD ===================== */
+.syn-citation {
+  background: var(--syn-surface);
+  border: 1px solid rgba(var(--syn-border-hue), 0.11);
+  border-radius: var(--syn-radius-md);
+  padding: 12px 13px;
+}
+.syn-citation__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.syn-citation__index {
+  font-family: var(--syn-font-mono);
+  font-size: var(--syn-text-xs);
+  color: var(--syn-accent);
+  border: 1px solid var(--syn-accent-35);
+  padding: 1px 6px;
+  border-radius: 2px;
+}
+.syn-citation__source {
+  font-family: var(--syn-font-mono);
+  font-size: var(--syn-text-sm);
+  color: var(--syn-text-secondary);
+  flex: 1;
+}
+.syn-citation__quote {
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: #7d8a9c;
+}
+.syn-citation__score {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 9px;
+}
+.syn-citation__score-val {
+  font-family: var(--syn-font-mono);
+  font-size: var(--syn-text-xs);
+  color: var(--syn-accent);
+}
+
+/* ===================== CODE BLOCK ===================== */
+.syn-code {
+  border: 1px solid rgba(var(--syn-border-hue), 0.14);
+  border-radius: 7px;
+  overflow: hidden;
+  background: var(--syn-bg-base);
+}
+.syn-code__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--syn-bg-chrome);
+  border-bottom: 1px solid var(--syn-divider);
+}
+.syn-code__dots {
+  display: flex;
+  gap: 5px;
+}
+.syn-code__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #2a3346;
+}
+.syn-code__name {
+  font-family: var(--syn-font-mono);
+  font-size: var(--syn-text-sm);
+  color: var(--syn-text-dimmer);
+  flex: 1;
+}
+.syn-code__body {
+  padding: 14px 16px;
+  font-family: var(--syn-font-mono);
+  font-size: 12.5px;
+  line-height: 1.85;
+  overflow-x: auto;
+  margin: 0;
+  color: var(--syn-text-secondary);
+  white-space: pre;
+}
+
+/* ===================== FLASHCARD ===================== */
+.syn-flashcard {
+  background: var(--syn-surface);
+  border: 1px solid rgba(var(--syn-border-hue), 0.13);
+  border-radius: 10px;
+  padding: 34px 38px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+.syn-flashcard__label {
+  font-family: var(--syn-font-mono);
+  font-size: var(--syn-text-xs);
+  letter-spacing: 0.16em;
+  color: var(--syn-accent);
+  margin-bottom: 16px;
+}
+.syn-flashcard__front {
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+.syn-flashcard__rule {
+  height: 1px;
+  background: var(--syn-border);
+  margin: 26px 0;
+}
+.syn-flashcard__back-label {
+  font-family: var(--syn-font-mono);
+  font-size: var(--syn-text-xs);
+  letter-spacing: 0.16em;
+  color: var(--syn-text-faint);
+  margin-bottom: 14px;
+}
+.syn-flashcard__back {
+  font-size: var(--syn-text-lg);
+  line-height: 1.7;
+  color: var(--syn-text-body);
+}
+.syn-flashcard__source {
+  margin-top: 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--syn-font-mono);
+  font-size: var(--syn-text-sm);
+  color: var(--syn-text-faint);
+}
+
+/* ===================== RATING BUTTONS ===================== */
+.syn-ratings {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 11px;
+}
+.syn-rating {
+  appearance: none;
+  cursor: pointer;
+  border-radius: var(--syn-radius-lg);
+  padding: 13px;
+  text-align: center;
+  background: #161d2b;
+  border: 1px solid var(--syn-border-strong);
+}
+.syn-rating__key {
+  font-size: var(--syn-text-md);
+  font-weight: 800;
+  color: var(--syn-text-secondary);
+}
+.syn-rating__interval {
+  font-family: var(--syn-font-mono);
+  font-size: var(--syn-text-sm);
+  color: var(--syn-text-dimmer);
+  margin-top: 5px;
+}
+.syn-rating--again {
+  background: rgba(255, 77, 87, 0.08);
+  border-color: rgba(255, 77, 87, 0.32);
+}
+.syn-rating--again .syn-rating__key {
+  color: var(--syn-danger-text);
+}
+.syn-rating--good {
+  background: var(--syn-accent-12);
+  border-color: color-mix(in srgb, var(--syn-accent) 42%, transparent);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--syn-accent) 18%, transparent);
+}
+.syn-rating--good .syn-rating__key {
+  color: var(--syn-accent);
+}
+.syn-rating--good .syn-rating__interval {
+  color: var(--syn-accent-text);
+}
+.syn-rating--easy {
+  background: rgba(95, 229, 114, 0.08);
+  border-color: rgba(95, 229, 114, 0.32);
+}
+.syn-rating--easy .syn-rating__key {
+  color: var(--syn-success);
+}
+
+/* ===================== STAT TILE ===================== */
+.syn-stat {
+  display: flex;
+  flex-direction: column;
+}
+.syn-stat__value {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+}
+.syn-stat__value--xl {
+  font-size: 42px;
+  font-weight: 900;
+  color: var(--syn-accent);
+}
+.syn-stat__label {
+  font-family: var(--syn-font-mono);
+  font-size: 9.5px;
+  color: var(--syn-text-faint);
+  margin-top: 4px;
+}
+
+/* ===================== NEWSPRINT CARD ===================== */
+.syn-newsprint {
+  background: var(--syn-paper);
+  color: var(--syn-paper-ink);
+  border-radius: 2px;
+  box-shadow: var(--syn-shadow-paper);
+  transform: rotate(-0.6deg);
+  padding: 20px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.syn-newsprint__grain {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  opacity: 0.09;
+}
+.syn-newsprint__title {
+  font-family: var(--syn-font-display);
+  font-size: 18px;
+  margin-bottom: 12px;
+  letter-spacing: 0.02em;
+  position: relative;
+}
+.syn-newsprint__body {
+  font-family: var(--syn-font-mono);
+  font-size: 12px;
+  line-height: 1.85;
+  color: #2c2619;
+  position: relative;
+}

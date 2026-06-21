@@ -1,50 +1,59 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
+import {
+  AppShell,
+  TitleBar,
+  SearchField,
+  NavRail,
+  NavItem,
+  Badge,
+  NAV_ICONS,
+  type AccentId,
+} from "@synapse/ui-kit";
+import { DegradationLadder } from "./components/DegradationLadder";
+import { VIEWS, type ViewId } from "./views";
 import "./App.css";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  const [view, setView] = useState<ViewId>("planner");
+  // Accent is wired to state now so the picker (a later milestone) is a one-liner.
+  const [accent] = useState<AccentId>("toxic-blue");
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
-  }
+  const ActiveView = VIEWS[view].component;
 
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
+    <AppShell
+      accent={accent}
+      titleBar={
+        <TitleBar
+          center={<SearchField />}
+          status={
+            <>
+              <Badge tone="accent" pulse>
+                1 JOB · Docling 62%
+              </Badge>
+              <Badge tone="success">GENERATIVE</Badge>
+              <Badge tone="purple">GATEKEEPER</Badge>
+            </>
+          }
         />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
+      }
+      sidebar={
+        <NavRail footer={<DegradationLadder />}>
+          {NAV_ICONS.map((item) => (
+            <NavItem
+              key={item.name}
+              icon={item.name}
+              label={item.label}
+              tag={item.tag}
+              active={view === (item.name as ViewId)}
+              onClick={() => setView(item.name as ViewId)}
+            />
+          ))}
+        </NavRail>
+      }
+    >
+      <ActiveView />
+    </AppShell>
   );
 }
 

@@ -1,0 +1,129 @@
+/* ============================================================================
+ * Neo-Gonzo Noir — design tokens
+ * ----------------------------------------------------------------------------
+ * The single source of truth for the Synapse cockpit's visual language. Every
+ * component reads from these custom properties, so re-skinning the whole system
+ * is a matter of editing values here (or flipping `data-accent` on the root).
+ *
+ * Aesthetic: a dark "noir terminal" cockpit — deep navy-black surfaces, a hot
+ * themeable accent, three typefaces (Archivo / JetBrains Mono / Special Elite),
+ * film grain, hard offset shadows, and rotated rubber-stamp flourishes.
+ * ========================================================================== */
+
+:root {
+  /* ---- Surfaces (dark, deepest → lightest) ---------------------------- */
+  --syn-bg-abyss: #07090f;       /* outermost page behind the window         */
+  --syn-bg-base: #0a0e16;        /* window body / main content area          */
+  --syn-bg-rail: #0b0f18;        /* left navigation rail                     */
+  --syn-bg-titlebar: #0c1019;    /* top title bar                           */
+  --syn-bg-chrome: #0c111b;      /* panel headers, toolbars, tree gutters    */
+  --syn-surface: #10151f;        /* default card / panel                     */
+  --syn-surface-sunken: #0e1320; /* inset panels, darker grouping cards      */
+  --syn-surface-input: #0a0e17;  /* text inputs / search field               */
+  --syn-surface-cal: #0b0f1a;    /* calendar day columns                     */
+
+  /* ---- Borders & dividers -------------------------------------------- */
+  --syn-border-hue: 130, 160, 205;                  /* shared cool-steel hue */
+  --syn-border: rgba(var(--syn-border-hue), 0.12);
+  --syn-border-strong: rgba(var(--syn-border-hue), 0.18);
+  --syn-border-subtle: rgba(var(--syn-border-hue), 0.09);
+  --syn-border-faint: rgba(var(--syn-border-hue), 0.06);
+  --syn-divider: rgba(var(--syn-border-hue), 0.1);
+  --syn-track: #1a2233;          /* progress / meter track                   */
+
+  /* ---- Text (primary → faintest) ------------------------------------- */
+  --syn-text: #eaf0f8;
+  --syn-text-bright: #f3f6fb;
+  --syn-text-body: #d4dbe6;
+  --syn-text-secondary: #c4ccd8;
+  --syn-text-muted: #aeb8c6;
+  --syn-text-dim: #9aa6b8;
+  --syn-text-dimmer: #8a96a8;
+  --syn-text-faint: #6f7b8d;
+  --syn-text-fainter: #5e6a7c;
+  --syn-text-ghost: #4d586c;
+  --syn-text-disabled: #3f4a5e;
+  --syn-text-on-accent: #04121a; /* dark ink for use on the bright accent     */
+
+  /* ---- Accent (themeable; default = Toxic Blue) ---------------------- */
+  --syn-accent: #2bc0ff;
+  --syn-accent-text: #cfe8f6;     /* readable accent-tinted text              */
+  /* Pre-mixed accent washes (color-mix is supported by the Tauri webview).  */
+  --syn-accent-07: color-mix(in srgb, var(--syn-accent) 7%, transparent);
+  --syn-accent-12: color-mix(in srgb, var(--syn-accent) 12%, transparent);
+  --syn-accent-16: color-mix(in srgb, var(--syn-accent) 16%, transparent);
+  --syn-accent-26: color-mix(in srgb, var(--syn-accent) 26%, transparent);
+  --syn-accent-35: color-mix(in srgb, var(--syn-accent) 35%, transparent);
+
+  /* ---- Semantic tones ------------------------------------------------ */
+  --syn-success: #5fe572;
+  --syn-success-text: #9fd9a8;
+  --syn-purple: #8b5cf0;         /* gatekeeper, review, wikilinks            */
+  --syn-purple-text: #b9a6ea;
+  --syn-danger: #ff4d57;
+  --syn-danger-text: #ff7a82;
+  --syn-amber: #e0a86a;          /* literals / numeric values in code        */
+
+  /* ---- "Traffic light" window controls ------------------------------- */
+  --syn-light-red: #ff5f57;
+  --syn-light-yellow: #febc2e;
+  --syn-light-green: #28c840;
+
+  /* ---- Newsprint / paper surfaces (cheatsheets, PDF viewer) ---------- */
+  --syn-paper: #e7e0cf;
+  --syn-paper-alt: #e9e3d4;
+  --syn-paper-ink: #221d12;
+  --syn-paper-ink-soft: #5a5240;
+  --syn-paper-red: #7a2018;
+
+  /* ---- Typography ---------------------------------------------------- */
+  --syn-font-sans: "Archivo", system-ui, -apple-system, sans-serif;
+  --syn-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+  --syn-font-display: "Special Elite", "JetBrains Mono", monospace;
+
+  --syn-text-xs: 10px;
+  --syn-text-sm: 11px;
+  --syn-text-base: 13px;
+  --syn-text-md: 14px;
+  --syn-text-lg: 16px;
+  --syn-text-xl: 20px;
+  --syn-text-2xl: 27px;
+
+  /* Letter-spacing for the mono "eyebrow" labels used throughout. */
+  --syn-tracking-eyebrow: 0.16em;
+  --syn-tracking-label: 0.1em;
+
+  /* ---- Radii --------------------------------------------------------- */
+  --syn-radius-window: 11px;
+  --syn-radius-lg: 9px;
+  --syn-radius-md: 6px;
+  --syn-radius-sm: 4px;
+  --syn-radius-pill: 3px;
+
+  /* ---- Spacing scale ------------------------------------------------- */
+  --syn-space-1: 4px;
+  --syn-space-2: 8px;
+  --syn-space-3: 12px;
+  --syn-space-4: 16px;
+  --syn-space-5: 20px;
+  --syn-space-6: 26px;
+
+  /* ---- Elevation ----------------------------------------------------- */
+  --syn-shadow-window: 0 50px 130px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(0, 0, 0, 0.5);
+  --syn-shadow-paper: 5px 6px 0 rgba(0, 0, 0, 0.45);
+  /* Gonzo hard-offset shadow under primary actions (uses the live accent). */
+  --syn-shadow-offset: 3px 3px 0 color-mix(in srgb, var(--syn-accent) 28%, transparent);
+  --syn-shadow-offset-sm: 2px 2px 0 color-mix(in srgb, var(--syn-accent) 28%, transparent);
+
+  /* ---- Film grain intensity (consumed by GrainOverlay) --------------- */
+  --syn-grain: 0.06;
+}
+
+/* ----------------------------------------------------------------------------
+ * Accent themes — set `data-accent` on any ancestor (typically the AppShell or
+ * <html>) to re-tint the entire subtree. Names mirror the design file's enum.
+ * -------------------------------------------------------------------------- */
+[data-accent="toxic-blue"]      { --syn-accent: #2bc0ff; --syn-accent-text: #cfe8f6; }
+[data-accent="harsh-green"]     { --syn-accent: #5fe572; --syn-accent-text: #c9f7d0; }
+[data-accent="saturated-crimson"] { --syn-accent: #ff4d57; --syn-accent-text: #ffc6ca; }
+[data-accent="velvet-purple"]   { --syn-accent: #8b5cf0; --syn-accent-text: #d8caf6; }

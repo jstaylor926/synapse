@@ -1,0 +1,125 @@
+/* ============================================================================
+ * Neo-Gonzo Noir — base layer
+ * ----------------------------------------------------------------------------
+ * Font loading, resets, scrollbars, keyframes, and a handful of utility
+ * classes shared across components. Imported once via the package barrel.
+ *
+ * NOTE: fonts are pulled from Google Fonts here so the design works out of the
+ * box. The platform is local-first — before shipping offline, self-host these
+ * three families and drop the @import. (Tracked for a later milestone.)
+ * ========================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Special+Elite&display=swap");
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--syn-bg-abyss);
+  color: var(--syn-text);
+  font-family: var(--syn-font-sans);
+  font-size: var(--syn-text-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---- Scrollbars (gonzo: square, steel) ------------------------------- */
+::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+::-webkit-scrollbar-track {
+  background: var(--syn-bg-base);
+}
+::-webkit-scrollbar-thumb {
+  background: #222c3e;
+  border: 2px solid var(--syn-bg-base);
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #30405a;
+}
+
+/* ---- Animations ------------------------------------------------------ */
+@keyframes syn-blip {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes syn-caret {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ---- Shared utility classes ------------------------------------------ */
+
+/* Mono "eyebrow" — the tracked uppercase labels above sections. */
+.syn-eyebrow {
+  font-family: var(--syn-font-mono);
+  font-size: var(--syn-text-xs);
+  letter-spacing: var(--syn-tracking-eyebrow);
+  color: var(--syn-text-fainter);
+  text-transform: uppercase;
+}
+
+/* Inline mono code/token text. */
+.syn-mono {
+  font-family: var(--syn-font-mono);
+}
+
+/* A small pulsing status dot. */
+.syn-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--syn-text-ghost);
+}
+.syn-dot--accent {
+  background: var(--syn-accent);
+}
+.syn-dot--success {
+  background: var(--syn-success);
+}
+.syn-dot--purple {
+  background: var(--syn-purple);
+}
+.syn-dot--danger {
+  background: var(--syn-danger);
+}
+.syn-dot--pulse {
+  animation: syn-blip 1.4s infinite;
+}
+
+/* Visually-hidden but accessible. */
+.syn-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
