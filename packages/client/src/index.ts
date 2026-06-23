@@ -6,7 +6,12 @@
  * cockpit, CLI, glasses bridge, and editor extensions never hand-roll `fetch`
  * and can't drift from the Pydantic contracts (mirrored in @synapse/contracts-ts).
  */
-import type { ReasonAnswer, SearchHit } from "@synapse/contracts-ts";
+import type {
+  ExtractResult,
+  ReasonAnswer,
+  SearchHit,
+  StudyKind,
+} from "@synapse/contracts-ts";
 
 const DEFAULT_BASE = "http://127.0.0.1:8765";
 
@@ -81,5 +86,22 @@ export function codeAssist(query: string, k = 8): Promise<ReasonAnswer> {
   return request<ReasonAnswer>("/code/assist", {
     method: "POST",
     body: JSON.stringify({ question: query, k }),
+  });
+}
+
+/**
+ * Extract study artifacts (flashcards / quiz / interview STAR / summary) from
+ * vault material on `topic`. Generative when a model is reachable, honest
+ * extractive floor otherwise — the AR glasses surface consumes this.
+ */
+export function extract(
+  topic: string,
+  kind: StudyKind = "flashcards",
+  n = 8,
+  k = 8,
+): Promise<ExtractResult> {
+  return request<ExtractResult>("/study/extract", {
+    method: "POST",
+    body: JSON.stringify({ topic, kind, n, k }),
   });
 }

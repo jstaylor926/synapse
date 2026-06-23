@@ -67,3 +67,64 @@ export interface ReasonAnswer {
   /** Degradation rung: "extractive" (no LLM) or "generative". */
   mode: string;
 }
+
+/** The shape of study artifact `study_extract` should produce. */
+export type StudyKind = "flashcards" | "quiz" | "interview" | "summary";
+
+/** A front/back recall pair. Front is the prompt, back is the answer. */
+export interface Flashcard {
+  front: string;
+  back: string;
+  /** Vault path/title it came from. */
+  source?: string | null;
+}
+
+/** A multiple-choice question. `options` includes the correct answer. */
+export interface QuizItem {
+  question: string;
+  options: string[];
+  /** Index into `options` of the correct answer. */
+  answer_index: number;
+  source?: string | null;
+}
+
+/** An interview prompt with a STAR-structured model answer. */
+export interface STARPrompt {
+  prompt: string;
+  situation: string;
+  task: string;
+  action: string;
+  result: string;
+  source?: string | null;
+}
+
+/** A single bulleted takeaway from the source material. */
+export interface KeyPoint {
+  point: string;
+  source?: string | null;
+}
+
+/** Request body for `study_extract` — turn vault material into study artifacts. */
+export interface ExtractRequest {
+  /** Topic/query used to retrieve source chunks from the vault. */
+  topic: string;
+  kind?: StudyKind;
+  /** How many items to produce. */
+  n?: number;
+  /** How many vault chunks to retrieve as source. */
+  k?: number;
+}
+
+/**
+ * Study artifacts extracted from the vault. Exactly one list is populated,
+ * matching `kind`. Grounded in `citations`; `mode` is the degradation rung.
+ */
+export interface ExtractResult {
+  kind: StudyKind;
+  flashcards: Flashcard[];
+  quiz: QuizItem[];
+  interview: STARPrompt[];
+  key_points: KeyPoint[];
+  citations: Citation[];
+  mode: string;
+}

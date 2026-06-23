@@ -1,0 +1,14 @@
+{
+  "name": "@synapse/hud-relay",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "hud": "./src/hud.ts"
+  },
+  "scripts": {
+    "dev": "bun run --hot src/relay.ts",
+    "start": "bun run src/relay.ts",
+    "typecheck": "tsc --noEmit"
+  }
+}

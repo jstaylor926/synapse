@@ -11,7 +11,9 @@ canonical code are in **`kernel/`**. A second, pre-migration copy of the backend
 
 - **`kernel/`** (canonical): what `package.json` and all `uv run --directory kernel` scripts
   point at. Edges are real but most capability bodies are `NotImplementedError` stubs.
-  Only `kb` (retrieval) and `reason` (answering) are actually implemented.
+  Only `kb` (retrieval), `reason` (answering), and `code` (Code Buddy) are implemented — and
+  `reason`/`code` now run **generative** when a model is reachable (litellm → Ollama/Anthropic),
+  falling back to the extractive floor otherwise.
 - **Legacy tree** (`synapse-engine/` + top-level python dirs): the *richer* reference
   implementation (full 31-tool MCP catalog, FSRS spaced-repetition, planner/ontology, vault
   gatekeeper, full retrieval/rerank, an 11-verb CLI). The migration plan (`IMPLEMENTATION_STATUS.md`
@@ -30,6 +32,9 @@ All commands run from the repo root. JS/TS is managed by **Bun** (workspaces); P
 # Install
 bun install                                   # links @synapse/* workspaces
 cd kernel && uv venv && uv pip install -e ".[dev]" && cd ..   # ML extras opt-in: ".[ml,dev]"
+# Generative reasoning (Ask/Code Buddy) needs the `ai` extra + a model:
+#   uv pip install -e ".[ai,dev]"   and  Ollama running (default ollama/qwen2.5:7b) or an Anthropic key.
+#   Without them, reason/code degrade to the extractive floor (still correct, never fabricates).
 
 # Run (all use the kernel/ canonical backend)
 bun run dev          # REST edge + async worker + cockpit frontend (concurrently)
@@ -79,11 +84,12 @@ SQLite indexes (`data/db/{index,jobs,sr}.db`) are **derived and rebuildable**. C
 1. **Degradation floors — never fabricate.** Every capability has an offline, dependency-free
    "floor" behind the same signature as its richer form. `kb.search()` runs a BM25 scan over the
    Markdown vault (the upgrade is FTS5 + `sqlite-vec` vectors fused with RRF). `reason.answer()`
-   runs the *extractive floor*: with no LLM the answer **is** the top-ranked source chunks
-   returned verbatim with citations — it never invents content (the upgrade is litellm →
-   Ollama offline / Anthropic with a key). Callers don't move when an upgrade lands. Preserve
-   this: a missing dependency or empty vault must degrade cleanly (return `[]` / a "floor"
-   answer), never raise.
+   and `code.assist()` go through the `llm.py` seam (`complete() → str | None`): when a model
+   answers they return a **generative**, grounded answer with citations; when litellm is absent or
+   no model is reachable, `complete()` returns `None` and they fall back to the **extractive
+   floor** — the answer **is** the top-ranked source chunks, never invented. Callers don't move
+   when an upgrade lands. Preserve this everywhere: a missing dependency, dead model, or empty
+   vault must degrade cleanly (`None` / `[]` / a floor answer), never raise.
 
 2. **Vault write-safety (gatekeeper).** The Markdown vault is non-ACID and editable out-of-band
    by Obsidian. Writes must go through a serialized single-writer thread with optimistic
@@ -99,19 +105,27 @@ mirrored** to TypeScript in `packages/contracts-ts/index.ts`. When you change on
 other. The single typed client `packages/client/src/index.ts` (`@synapse/client`) is the only place
 surfaces call the REST edge — surfaces never hand-roll `fetch`.
 
-### Frontend (the one wired path)
+### Frontend (the wired paths + the gate)
 
-The cockpit's **Ask view** is the only view wired end-to-end with real data; it is the template
-for the rest:
+**Two** cockpit views are wired end-to-end; they are the template for the rest:
 
 ```
-AskView (React) → @synapse/client.ask() → POST :8765/reason/ask → reason.answer() → kb.search() → grounded answer + citations
+AskView      → @synapse/client.ask()       → POST /reason/ask  → reason.answer() → kb.search()
+CodeBuddyView→ @synapse/client.codeAssist()→ POST /code/assist → code.assist()   → kb.search()
 ```
 
-Every other cockpit view (Code, Capture, Planner, Review, Study, Notes, Vault) is presentational
-with **mock data** — the Neo-Gonzo Noir design is done, the kernel wiring is not. Scaling a view
-means: implement the kernel capability in `kernel/`, expose it on both edges, add the typed client
-method + contract, then replace the mock in the view.
+Code Buddy is an editable **CodeMirror IDE** (`apps/cockpit/src/components/CodeEditor.tsx`): it
+embeds your pasted code into the query, and `lib/parseAnswer.ts` splits the answer's fenced code
+blocks into editable editors. The other six views (Capture, Planner, Review, Study, Notes, Vault)
+are presentational **mock data** — design done, wiring not.
+
+The cockpit **feature-gates** to kernel-wired views: each `VIEWS` entry has a `ready` flag
+(`apps/cockpit/src/views/index.ts`) and `featureFlags.ts` hides non-ready views in dev, so local
+testing surfaces only working features. Flip `ready: true` when a view's slice lands;
+`VITE_SYNAPSE_ONLY_READY=0` reveals the mocks.
+
+Scaling a view: implement the kernel capability in `kernel/`, expose it on both edges, add the
+typed client method (+ contract if the shape is new), replace the mock, flip `ready: true`.
 
 ## Where to read more
 

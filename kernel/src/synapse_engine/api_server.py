@@ -16,7 +16,7 @@ from __future__ import annotations
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from contracts.models import ReasonAsk
+from contracts.models import ExtractRequest, ReasonAsk
 
 from synapse_engine import __version__
 from synapse_engine.config import get_settings
@@ -58,6 +58,13 @@ def code_assist(body: ReasonAsk) -> dict:
     from synapse_engine.code import assist
 
     return assist(body.question, k=body.k).model_dump()
+
+
+@app.post("/study/extract")
+def study_extract(body: ExtractRequest) -> dict:
+    from synapse_engine.study import extract
+
+    return extract(body.topic, kind=body.kind, n=body.n, k=body.k).model_dump()
 
 
 def main() -> None:

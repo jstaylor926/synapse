@@ -19,6 +19,7 @@
 | Regime | Architecture ref | Now | Target milestone |
 |---|---|---|---|
 | Extractive floor (offline, no keys) | §12, P8 | ✅ works | — |
+| Generative reasoning (litellm → Ollama/Anthropic) | §1.5, §16 | ✅ works | — (done) |
 | Kernel MCP boundary (8 tools) | §4.1 | ✅ works | — |
 | Sync PDF ops (merge/split/rotate/redact/extract) | §4.2 | ✅ works | — |
 | Vault write-safety (gatekeeper) | §7, §16.4 | ❌ violates | **M0 → M2** |
@@ -112,12 +113,14 @@ Doc M1 exit: *"ask / flashcards / quiz over your real material, with citations, 
 - **Libraries:** `fastembed`.
 - **Exit:** provider switch is one env var; hash remains the zero-config default.
 
-### 1.5 litellm gateway + Ollama offline
-- **Now:** `reason/llm.py` calls the `anthropic` SDK directly.
-- **Target (§16 stack):** route through `litellm`; offline → Ollama if present, else extractive.
-- **Files:** add `LiteLLMProvider` to `reason/llm.py`; keep `ExtractiveLLM` default.
-- **Libraries:** `litellm` (+ local Ollama optional).
-- **Exit:** key present → Anthropic via litellm; offline → Ollama/extractive; never fabricates.
+### 1.5 litellm gateway + Ollama offline ✅ DONE (commit `eb87a36`)
+- **Done:** the kernel routes through `litellm` via a degrade-safe seam at
+  `kernel/src/synapse_engine/llm.py` (`complete() → str | None`). `reason.answer()` and
+  `code.assist()` go generative when a model answers; `None` ⇒ extractive floor.
+- **Config:** `llm_model` default `ollama/qwen2.5:7b`, `ollama_base`; Anthropic when key + `anthropic/…`.
+- **Note:** landed at `synapse_engine/llm.py` (not the planned `reason/llm.py`); the kernel had
+  no LLM before this (extractive-only), so there was no `anthropic`-SDK path to replace.
+- **Exit met:** key present → Anthropic via litellm; offline → Ollama; neither → extractive; never fabricates.
 
 ### 1.6 Structure-aware chunking
 - **Now:** `ingest/chunk.py` = character window (~800/150) on blank lines; no structure.

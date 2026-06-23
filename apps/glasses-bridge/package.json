@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@synapse/client": "workspace:*",
     "@synapse/contracts-ts": "workspace:*"
   }
 }
