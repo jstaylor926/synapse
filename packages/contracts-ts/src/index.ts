@@ -128,3 +128,38 @@ export interface ExtractResult {
   citations: Citation[];
   mode: string;
 }
+
+// --- Spaced repetition (review loop) --------------------------------------- //
+
+/** Persist generated flashcards so they become gradable (idempotent by content). */
+export interface SaveCardsRequest {
+  /** Deck name — usually the study topic. */
+  deck: string;
+  cards: Flashcard[];
+}
+
+/** The stable card ids for the saved deck, in input order. */
+export interface SaveCardsResult {
+  ids: string[];
+}
+
+/** Grade one review. `rating`: 1=Again, 2=Hard, 3=Good, 4=Easy. */
+export interface GradeRequest {
+  card_id: string;
+  rating: number;
+}
+
+/** Outcome of a grade — when the card is next due, with a HUD-ready label. */
+export interface GradeResult {
+  card_id: string;
+  next_due: string;
+  /** Human delta until next review, e.g. "10m", "2d". */
+  interval: string;
+  /** new | learning | review | relearning. */
+  state: string;
+}
+
+/** Cards due for review now, most-urgent first. */
+export interface DueResult {
+  cards: ReviewCard[];
+}

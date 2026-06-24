@@ -154,3 +154,48 @@ class ReasonAnswer(BaseModel):
     steps: list[str] | None = None
     # Which degradation rung produced this: "extractive" (no LLM) or "generative".
     mode: str = "extractive"
+
+
+# --------------------------------------------------------------------------- #
+# Spaced repetition (review loop) — grade a card, schedule the next review.
+# Persists to data/db/sr.db (a derived index, not the vault), so this path is
+# safe without the vault gatekeeper. Scheduler degrades: SimpleScheduler floor →
+# FSRS-6 (py-fsrs) when installed and SYNAPSE_SR_SCHEDULER=fsrs.
+# --------------------------------------------------------------------------- #
+class SaveCardsRequest(BaseModel):
+    """Persist generated flashcards into the SR store so they become gradable.
+
+    Idempotent: card ids are a content hash of (deck, front, back), so re-saving
+    the same deck returns the existing ids and never resets a card's schedule.
+    """
+
+    deck: str = Field(description="Deck name — usually the study topic.")
+    cards: list[Flashcard] = Field(default_factory=list)
+
+
+class SaveCardsResult(BaseModel):
+    """The stable card ids for the saved deck, in input order."""
+
+    ids: list[str] = Field(default_factory=list)
+
+
+class GradeRequest(BaseModel):
+    """Grade one review. `rating` follows FSRS: 1=Again, 2=Hard, 3=Good, 4=Easy."""
+
+    card_id: str
+    rating: int = Field(ge=1, le=4, description="1=Again, 2=Hard, 3=Good, 4=Easy.")
+
+
+class GradeResult(BaseModel):
+    """Outcome of a grade — when the card is next due, with a HUD-ready label."""
+
+    card_id: str
+    next_due: datetime
+    interval: str = Field(description="Human delta until next review, e.g. '10m', '2d'.")
+    state: str = Field(description="new | learning | review | relearning.")
+
+
+class DueResult(BaseModel):
+    """Cards due for review now, most-urgent first."""
+
+    cards: list[ReviewCard] = Field(default_factory=list)

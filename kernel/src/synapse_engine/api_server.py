@@ -16,7 +16,9 @@ from __future__ import annotations
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from contracts.models import ExtractRequest, ReasonAsk
+from fastapi import HTTPException
+
+from contracts.models import ExtractRequest, GradeRequest, ReasonAsk, SaveCardsRequest
 
 from synapse_engine import __version__
 from synapse_engine.config import get_settings
@@ -65,6 +67,33 @@ def study_extract(body: ExtractRequest) -> dict:
     from synapse_engine.study import extract
 
     return extract(body.topic, kind=body.kind, n=body.n, k=body.k).model_dump()
+
+
+@app.post("/study/save")
+def study_save(body: SaveCardsRequest) -> dict:
+    """Persist a generated deck so its cards become gradable (idempotent)."""
+    from synapse_engine.study import save_flashcards
+
+    return {"ids": save_flashcards(body.deck, body.cards)}
+
+
+@app.get("/study/due")
+def study_due(deck: str | None = None, limit: int = 20) -> dict:
+    """Cards due for review now, most-urgent first."""
+    from synapse_engine.study import due_cards
+
+    return {"cards": [c.model_dump() for c in due_cards(limit=limit, deck=deck)]}
+
+
+@app.post("/study/grade")
+def study_grade(body: GradeRequest) -> dict:
+    """Grade a review (1=Again..4=Easy) and return the next due time."""
+    from synapse_engine.study import grade
+
+    try:
+        return grade(body.card_id, body.rating).model_dump()
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=f"unknown card_id {exc}") from exc
 
 
 def main() -> None:

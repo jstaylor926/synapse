@@ -166,17 +166,48 @@ def _summary_floor(citations: list[Citation], n: int) -> list[KeyPoint]:
     return [KeyPoint(point=s, source=src) for s, src in _sentences(citations)[:n]]
 
 
+# Words too generic to make a useful cloze blank — keep the set small and obvious.
+_STOPWORDS = frozenset(
+    "the a an and or of to in is are was were be been being that this these those "
+    "with as for on by it its into from at if then than so but not you your we our "
+    "they their which what when where how why can may will would should could".split()
+)
+
+
+def _cloze_term(sentence: str) -> str | None:
+    """Pick the most blank-worthy word in a sentence: the longest non-stopword
+    token (≥4 letters). Naive but honest — the answer is always a word lifted
+    verbatim from the source. Returns None when nothing is worth blanking."""
+    best: str | None = None
+    for token in re.findall(r"[A-Za-z][A-Za-z-]{3,}", sentence):
+        if token.lower() in _STOPWORDS:
+            continue
+        if best is None or len(token) > len(best):
+            best = token
+    return best
+
+
 def _flashcard_floor(citations: list[Citation], n: int) -> list[Flashcard]:
-    """Offline flashcards built from raw vault text — the never-fabricate floor.
+    """Offline flashcards via cloze deletion — the never-fabricate floor.
 
-    See the design note where this is called: the *back* of every card MUST be
-    verbatim (or trivially trimmed) source text — we may shape the *front* (a
-    cloze blank, a heading, a "What is X?" stem), but we never invent the answer.
+    For each source sentence we blank its most salient word: the *front* is the
+    sentence with that word hidden, the *back* is the word itself — always
+    verbatim source text, never invented. Sentences with no blank-worthy term
+    are skipped so every card stays answerable.
 
-    TODO(you): implement this heuristic. `_sentences(citations)` gives you
-    (sentence, source) pairs already filtered to useful length.
+    The heuristic lives in `_cloze_term`; alternatives (first-sentence
+    definition, heading→body) are documented in GLASSES_INTEGRATION.md §4.1.
     """
-    raise NotImplementedError("flashcard extractive floor — your contribution")
+    cards: list[Flashcard] = []
+    for sentence, src in _sentences(citations):
+        term = _cloze_term(sentence)
+        if not term:
+            continue
+        front = re.sub(re.escape(term), "_____", sentence, count=1)
+        cards.append(Flashcard(front=front, back=term, source=src))
+        if len(cards) >= n:
+            break
+    return cards
 
 
 def _floor(kind: StudyKind, topic: str, citations: list[Citation], n: int) -> ExtractResult:

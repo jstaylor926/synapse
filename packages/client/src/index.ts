@@ -7,8 +7,13 @@
  * and can't drift from the Pydantic contracts (mirrored in @synapse/contracts-ts).
  */
 import type {
+  DueResult,
   ExtractResult,
+  Flashcard,
+  GradeResult,
   ReasonAnswer,
+  ReviewCard,
+  SaveCardsResult,
   SearchHit,
   StudyKind,
 } from "@synapse/contracts-ts";
@@ -103,5 +108,34 @@ export function extract(
   return request<ExtractResult>("/study/extract", {
     method: "POST",
     body: JSON.stringify({ topic, kind, n, k }),
+  });
+}
+
+/**
+ * Persist a generated flashcard deck into the spaced-repetition store so its
+ * cards become gradable. Idempotent: card ids are a content hash, so re-saving
+ * the same deck returns the existing ids and never resets a card's schedule.
+ */
+export async function saveFlashcards(deck: string, cards: Flashcard[]): Promise<string[]> {
+  const { ids } = await request<SaveCardsResult>("/study/save", {
+    method: "POST",
+    body: JSON.stringify({ deck, cards }),
+  });
+  return ids;
+}
+
+/** Cards due for review now, most-urgent first (optionally scoped to a deck). */
+export async function dueCards(deck?: string, limit = 20): Promise<ReviewCard[]> {
+  const params = new URLSearchParams({ limit: String(limit) });
+  if (deck) params.set("deck", deck);
+  const { cards } = await request<DueResult>(`/study/due?${params}`);
+  return cards;
+}
+
+/** Grade a review (1=Again, 2=Hard, 3=Good, 4=Easy); returns the next due time. */
+export function grade(cardId: string, rating: number): Promise<GradeResult> {
+  return request<GradeResult>("/study/grade", {
+    method: "POST",
+    body: JSON.stringify({ card_id: cardId, rating }),
   });
 }
