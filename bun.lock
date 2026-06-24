@@ -70,6 +70,19 @@
         "vite": "^7.0.4",
       },
     },
+    "apps/glasses-study": {
+      "name": "@synapse/glasses-study",
+      "version": "0.1.0",
+      "dependencies": {
+        "@evenrealities/even_hub_sdk": "^0.0.11",
+      },
+      "devDependencies": {
+        "@evenrealities/evenhub-cli": "^0.1.13",
+        "@evenrealities/evenhub-simulator": "^0.7.3",
+        "typescript": "~5.8.3",
+        "vite": "^7.0.4",
+      },
+    },
     "apps/hud-relay": {
       "name": "@synapse/hud-relay",
       "version": "0.1.0",
@@ -356,6 +369,8 @@
 
     "@synapse/glasses-hub": ["@synapse/glasses-hub@workspace:apps/glasses-hub"],
 
+    "@synapse/glasses-study": ["@synapse/glasses-study@workspace:apps/glasses-study"],
+
     "@synapse/hud-relay": ["@synapse/hud-relay@workspace:apps/hud-relay"],
 
     "@synapse/obsidian-synapse": ["@synapse/obsidian-synapse@workspace:extensions/obsidian-synapse"],
@@ -611,6 +626,8 @@
     "@synapse/cockpit/typescript": ["typescript@5.8.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ=="],
 
     "@synapse/glasses-hub/typescript": ["typescript@5.8.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ=="],
+
+    "@synapse/glasses-study/typescript": ["typescript@5.8.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ=="],
 
     "chalk/supports-color": ["supports-color@7.2.0", "", { "dependencies": { "has-flag": "^4.0.0" } }, "sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw=="],
   }

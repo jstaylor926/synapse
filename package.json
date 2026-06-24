@@ -17,9 +17,11 @@
     "dev:desktop": "bun run --cwd apps/cockpit tauri:dev",
     "dev:glasses": "bun run --cwd apps/glasses-bridge dev",
     "dev:glasses-hub": "bun run --cwd apps/glasses-hub dev",
+    "dev:glasses-study": "bun run --cwd apps/glasses-study dev",
     "dev:hud": "bun run --cwd apps/hud-relay dev",
     "typecheck": "bun run --filter '*' typecheck",
-    "test:kernel": "uv run --no-sync --directory kernel pytest"
+    "test:kernel": "uv run --no-sync --directory kernel pytest",
+    "test:glasses-study": "bun run --cwd apps/glasses-study test"
   },
   "devDependencies": {
     "@types/bun": "latest",
